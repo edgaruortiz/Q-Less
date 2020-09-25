@@ -1,0 +1,262 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1>New Transaction <span class="fa fa-train"></span> </h1>
+<hr />
+<h3>Card Details</h3>
+<form action="" id="newTrip">
+    <div class="form-search">
+        <label>Transport Card Id</label>
+        <div class="tt-container">
+            <button type="submit" class="btn btn-primary search"><span class="fa fa-search"></span></button>
+            <input id="qcard" name="card" data-rule-isValidCard="true" type="text" value="" class="form-control search" />
+            <legend hidden id="notfound" class="text-danger small">Transport Card not Found!</legend>
+        </div>
+    </div>
+    <br />
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-2">
+                <label>Remaining Credit:</label>
+                <legend id="qcardCredit" class="text text-lg text-warning">0.00</legend>
+            </div>
+            <div class="col-md-2">
+                <label>Card Type:</label>
+                <legend id="qcardType" class="text text-lg text-warning">-</legend>
+            </div>
+        </div>
+    </div>
+</form>
+<hr />
+<h3>Trip Details</h3>
+<form action="" id="newTransactions">
+    <label>MRT Line </label>
+    @Html.DropDownList("MRTLines", new List<SelectListItem>
+    {
+        new SelectListItem{ Text="Select your MRT Line", Value = "0" },
+        new SelectListItem{ Text="MRT Line 1", Value = "1" },
+        new SelectListItem{ Text="MRT Line 2", Value = "2" }
+    }, new {@class="form-control"})
+
+    <div class="form-search">
+        <label>Location Entry Point</label>
+        <div class="tt-container">
+            <input id="entry" name="EntryStations" data-rule-isValidEntryLoc="true" type="text" value="" class="form-control search" />
+            <legend hidden id="notfound" class="text-danger small">Transport Card not Found!</legend>
+        </div>
+    </div>
+    <div class="form-search">
+        <label>Location Exit Point</label>
+        <div class="tt-container">
+            <input id="exit" name="ExitStations" data-rule-isValidExitLoc="true" type="text" value="" class="form-control search" />
+            <legend hidden id="notfound" class="text-danger small">Please select Exit location</legend>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Fare Amount:</label>
+                    <legend id="qFareAmount" class="text text-lg text-info">0.00</legend>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Discount Amount:</label>
+                    <legend id="qTripDiscountAmt" class="text text-lg text-danger">0.00</legend>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Discount %</label>
+                    <legend id="qTripDiscount" class="text text-lg text-success">0</legend>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Total Amount:</label>
+                    <legend id="qTripAmount" class="text text-lg text-info">0.00</legend>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>Credits After:</label>
+                <legend id="qRemainingCredit" class="text text-lg text-warning">0.00</legend>
+            </div>
+
+        </div>
+    </div>
+    <button class="btn btn-primary" id="btnSubmitTransac" disabled>Submit</button>
+</form>
+
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval");
+    <script>
+        var TransportCardId  = ""
+        var mrtLine = "";
+        var stations = [];
+        var newTrip = {
+            EntryPointId: "",
+            ExitPointId: ""
+        }
+        var vmTransaction = {
+            Amount: 0,
+            DateTimeStamp :"",
+            EntryPoint : "",
+            ExitPoint: "",
+            TransportCardId : ""
+        }
+        var noOfTransactions = 0;
+        var totalDiscount = 0;
+
+        $.validator.addMethod("isValidCard", function () {
+            return TransportCardId && TransportCardId !== 0
+        }, "Please fillup valid Card Id");
+
+        $(document).ready(function () {
+            $('#qcard').change(function () {
+                TransportCardId = $('#qcard').val();
+                $('#notfound').attr('hidden', '');
+            });
+
+            $('#MRTLines').on('change',function () {
+                mrtLine = this.value;
+                $.ajax({
+                    url: "/api/Destinations/GetStations/" + mrtLine,
+                    method: "GET",
+                    success: function (data) {
+                        stations = [];
+                        $.each(data, function (i, station) {
+                            stations[station.Id] = station.StationName;
+                        });
+                        var states = new Bloodhound({
+                            datumTokenizer: Bloodhound.tokenizers.whitespace,
+                            queryTokenizer: Bloodhound.tokenizers.whitespace,
+                            local: stations
+                        });
+                        $('#entry').typeahead({
+                            hint: true,
+                            highlight: true,
+                            minLength: 1
+                        },
+                        {
+                            name: 'StationName',
+                            source: states
+                            }).on("typeahead:select", function (e, station) {
+                                vmTransaction.EntryPoint = station
+                                newTrip.EntryPointId = $.inArray(station, stations)
+                                GetTransportCost();
+                            });
+                        $('#exit').typeahead({
+                            hint: true,
+                            highlight: true,
+                            minLength: 1
+                        },{
+                            name: 'StationName',
+                            source: states
+                            }).on("typeahead:select", function (e, station) {
+                                vmTransaction.ExitPoint = station
+                                newTrip.ExitPointId = $.inArray(station, stations)
+                                GetTransportCost();
+                        });
+                    },
+                    error: function () {
+                    }
+                });
+            });
+
+            $('#newTrip').validate({
+                submitHandler: function () {
+                    $.ajax({
+                        url: "/api/TransportCards/GetTransportCard/" + TransportCardId,
+                        method: "GET",
+                        success: function (data) {
+                            $('#qcardCredit').text(data.CardValue.toFixed(2))
+                            $('#qcardType').text(data.CardType.Description)
+                            if (data.CardTypeId == 2)
+                                totalDiscount = 20;
+                            vmTransaction.TransportCardId = data.TransportCardUniqueId
+                            console.log(data)
+                            $.ajax({
+                                url: "/api/Transactions/GetDailyTransactions/" + TransportCardId,
+                                method: "GET",
+                                success: function (data) {
+                                    if (data.length > 0 && data.length < 5) {
+                                        var discountCount = 3 * data.length;
+                                        totalDiscount += discountCount;
+                                        $('#qTripDiscount').text(totalDiscount)
+                                    }
+                                },
+                                error: function () {
+                                    $('#notfound').removeAttr('hidden');
+                                }
+                            })
+                        },
+                        error: function () {
+                            $('#notfound').removeAttr('hidden');
+                        }
+                    })
+
+                }
+            });
+            function GetTransportCost() {
+                if (newTrip.EntryPointId != "" && newTrip.ExitPointId != "") {
+                    $.ajax({
+                        url: "/api/Destinations/GetTripCost/",
+                        method: "POST",
+                        data: newTrip,
+                        success: function (data) {
+                            var price = data[0].Price.toFixed(2)
+                            var credits = $('#qcardCredit').text();
+
+                            $('#qFareAmount').text(price);//Fare Amount
+
+                            //Discount
+                            var discount = $('#qTripDiscount').text();
+                            discount /= 100;
+                            var discAmount = price * discount;
+                            $('#qTripDiscountAmt').text(discAmount);
+                            var totalAmount = (price - discAmount)
+                            $('#qTripAmount').text(totalAmount);
+
+                            var remained = (credits - totalAmount );//Credit Less Cost
+                            $('#qRemainingCredit').text(remained.toFixed(2));
+                            vmTransaction.Amount = totalAmount;
+                            if (remained > -1)
+                                $('#btnSubmitTransac').removeAttr('disabled');
+                        },
+                        error: function () {
+                            $('#notfound').removeAttr('hidden');
+                        }
+                    })
+                }
+            }
+
+            $('#newTransactions').validate({
+                submitHandler: function () {
+                    $.ajax({
+                        url: "/api/Transactions/Save",
+                        method: "POST",
+                        data: vmTransaction,
+                        success: function (data) {
+                            alert("sucess")
+                        },
+                        error: function () {
+                            alert('error')
+                        }
+                    })
+                    console.log(vmTransaction);
+                }
+            });
+        });
+    </script>
+}

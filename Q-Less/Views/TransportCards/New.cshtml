@@ -1,0 +1,33 @@
+﻿@model Q_Less.Models.TransportCard
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1>
+    New Transport Card <span class="fa fa-credit-card"></span>
+</h1>
+
+@using (Html.BeginForm("Save", "TransportCards"))
+{
+    var rand = new Random();
+    <div class="form-group">
+        @Html.LabelFor(m => m.TransportCardUniqueId)
+        @Html.TextBoxFor(m => m.TransportCardUniqueId, new { @class = "form-control", @Value = rand.Next(100000000, 1000000000), @readonly = "true" })
+        <p class="label text-info">Note: Copy and paste it to another clipboard for testing purposes.</p>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.CardValue)
+        @Html.TextBoxFor(m => m.CardValue, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.CardValue)
+    </div>
+    @Html.HiddenFor(m => m.DatePurchased, new { @Value = DateTime.Now });
+    @Html.HiddenFor(m => m.CardTypeId, new { @Value = 1 });
+    <button type="submit" class="btn btn-info">Save</button>
+}
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}

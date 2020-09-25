@@ -1,0 +1,115 @@
+﻿@model Q_Less.Models.TransportCardReloadHistory
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1>ReLoad Q-Less Card <span class="fa fa-credit-card"></span> </h1>
+<hr />
+<h3>Card Details</h3>
+<form action="" id="SubmitSearchForm">
+    <div class="form-search">
+        <label>Transport Card Id</label>
+        <div class="tt-container">
+            <button type="submit" class="btn btn-primary search"><span class="fa fa-search"></span></button>
+            <input id="qcard" name="card" data-rule-isValidCard="true" type="text" value="" class="form-control search" />
+            <legend hidden id="notfound" class="text-danger small">Transport Card not Found!</legend>
+        </div>
+    </div>
+    <br />
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-2">
+                <label>Remaining Credit:</label>
+                <legend id="qcardCredit" class="text text-lg text-warning">0.00</legend>
+            </div>
+            <div class="col-md-2">
+                <label>Card Type:</label>
+                <legend id="qcardType" class="text text-lg text-warning">-</legend>
+            </div>
+        </div>
+    </div>
+</form>
+<hr />
+
+<h3>Reload Details</h3>
+@using (Html.BeginForm("Reload", "TransportCards"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.CashValue)
+        @Html.TextBoxFor(m => m.CashValue, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.CashValue)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.CardValue)
+        @Html.TextBoxFor(m => m.CardValue, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.CardValue)
+    </div>
+    @Html.HiddenFor(m => m.TransportCardUniqueId, new { @Id = "TransportCardUniqueId" });
+    <button type="submit" class="btn btn-info">Save</button>
+}
+
+@*ADD Condition thru javascript nalng , if cash < cardval = enable button*@
+
+
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval");
+    <script>
+        var TransportCardUniqueId = ""
+        $.validator.addMethod("isValidCard", function () {
+            return TransportCardUniqueId && TransportCardUniqueId !== 0
+        }, "Please fillup valid Card Id");
+            
+        $.validator.addMethod("isValidAmount", function () {
+            return vm.CardValue && vm.CardValue > 0
+        }, "Please Enter valid load Amount");
+
+        $(document).ready(function () {
+            console.log($('#TransportCardUniqueId').val())
+            $('#qcard').change(function () {
+                resetValues();
+                TransportCardUniqueId = $('#qcard').val()
+                $('#TransportCardUniqueId').val(TransportCardUniqueId);
+                $('#notfound').attr('hidden', '');
+            });
+
+            $('#loadAmount').change(function () {
+                vm.CardValue = $('#loadAmount').val();
+                console.log(vm)
+            });
+
+            $('#SubmitSearchForm').validate({
+                submitHandler: function () {
+                    $.ajax({
+                        url: "/api/TransportCards/GetTransportCard/" + TransportCardUniqueId,
+                        method: "GET",
+                        success: function (data) {
+                            $('#qcardCredit').text(data.CardValue.toFixed(2))
+                            $('#qcardType').text(data.CardType.Description)
+                            $('#btnSubmit').removeAttr('disabled');
+                        },
+                        error: function () {
+                            TransportCardUniqueId = "";
+                            $('#qcardCredit').text('0.00')
+                            $('#qcardType').text('-')
+                            $('#notfound').removeAttr('hidden');
+                            $('#btnSubmit').attr('disabled', "");
+                        }
+                    })
+                }
+            });
+
+            function resetValues() {
+                $('#qcardCredit').text('0.00')
+                $('#qcardType').text('-')
+                TransportCardUniqueId = "";
+            }
+        })
+
+
+    </script>
+
+}
