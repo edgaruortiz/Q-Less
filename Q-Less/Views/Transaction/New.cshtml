@@ -43,18 +43,18 @@
     <div class="form-search">
         <label>Location Entry Point</label>
         <div class="tt-container">
-            <input id="entry" name="EntryStations" data-rule-isValidEntryLoc="true" type="text" value="" class="form-control search" />
+            <input id="entry" disabled name="EntryStations" data-rule-isValidEntryLoc="true" type="text" value="" class="form-control search" />
             <legend hidden id="notfound" class="text-danger small">Transport Card not Found!</legend>
         </div>
     </div>
     <div class="form-search">
         <label>Location Exit Point</label>
         <div class="tt-container">
-            <input id="exit" name="ExitStations" data-rule-isValidExitLoc="true" type="text" value="" class="form-control search" />
+            <input id="exit" name="ExitStations" disabled data-rule-isValidExitLoc="true" type="text" value="" class="form-control search" />
             <legend hidden id="notfound" class="text-danger small">Please select Exit location</legend>
         </div>
     </div>
-    
+
     <div class="form-group">
         <div class="row">
             <div class="col-md-2">
@@ -92,6 +92,7 @@
 
         </div>
     </div>
+    <legend hidden id="notEnoughCredits" class="text-danger small">Not Enough Credits! Please Reload your card</legend>
     <button class="btn btn-primary" id="btnSubmitTransac" disabled>Submit</button>
 </form>
 
@@ -126,7 +127,25 @@
             $('#qcard').change(function () {
                 TransportCardId = $('#qcard').val();
                 $('#notfound').attr('hidden', '');
+                resetFields();
             });
+
+            function resetFields() {
+                $('#qcardCredit').text("0.00");
+                $('#qFareAmount').text("0.00");
+                $('#qTripAmount').text("0.00");
+                $('#qRemainingCredit').text("0.00");
+                $('#qTripDiscountAmt').text("0.00");
+                $('#qTripDiscount').text("0");
+                
+                
+                
+                
+                $('#qcardType').text("-");
+                $('#entry').attr("disabled", "");
+                $('#exit').attr("disabled", "");
+                
+            }
 
             $('#MRTLines').on('change',function () {
                 mrtLine = this.value;
@@ -143,6 +162,10 @@
                             queryTokenizer: Bloodhound.tokenizers.whitespace,
                             local: stations
                         });
+                        $('#entry').typeahead('destroy');
+                        $('#exit').typeahead('destroy');
+                        $('#entry').typeahead().off("typeahead:select");
+                        $('#exit').typeahead().off("typeahead:select");
                         $('#entry').typeahead({
                             hint: true,
                             highlight: true,
@@ -180,21 +203,23 @@
                         url: "/api/TransportCards/GetTransportCard/" + TransportCardId,
                         method: "GET",
                         success: function (data) {
-                            $('#qcardCredit').text(data.CardValue.toFixed(2))
-                            $('#qcardType').text(data.CardType.Description)
-                            if (data.CardTypeId == 2)
+                            $('#qcardCredit').text(data[0].CardValue.toFixed(2))
+                            $('#qcardType').text(data[0].CardType.Description)
+                            $('#entry').removeAttr("disabled");
+                            $('#exit').removeAttr("disabled");
+                            if (data[0].CardTypeId == 2)
                                 totalDiscount = 20;
-                            vmTransaction.TransportCardId = data.TransportCardUniqueId
-                            console.log(data)
+                            vmTransaction.TransportCardId = data[0].TransportCardUniqueId
                             $.ajax({
                                 url: "/api/Transactions/GetDailyTransactions/" + TransportCardId,
                                 method: "GET",
                                 success: function (data) {
+                                    var discountCount = 0;
                                     if (data.length > 0 && data.length < 5) {
-                                        var discountCount = 3 * data.length;
-                                        totalDiscount += discountCount;
-                                        $('#qTripDiscount').text(totalDiscount)
+                                        discountCount= 3 * data.length;
                                     }
+                                    totalDiscount += discountCount;
+                                    $('#qTripDiscount').text(totalDiscount)
                                 },
                                 error: function () {
                                     $('#notfound').removeAttr('hidden');
@@ -224,15 +249,20 @@
                             var discount = $('#qTripDiscount').text();
                             discount /= 100;
                             var discAmount = price * discount;
-                            $('#qTripDiscountAmt').text(discAmount);
+                            $('#qTripDiscountAmt').text(discAmount.toFixed(2));
                             var totalAmount = (price - discAmount)
-                            $('#qTripAmount').text(totalAmount);
+                            $('#qTripAmount').text(totalAmount.toFixed(2));
 
                             var remained = (credits - totalAmount );//Credit Less Cost
                             $('#qRemainingCredit').text(remained.toFixed(2));
                             vmTransaction.Amount = totalAmount;
-                            if (remained > -1)
+                            if (remained > -1) {
+                                $('#notEnoughCredits').attr('hidden', "");
                                 $('#btnSubmitTransac').removeAttr('disabled');
+                            } else {
+                                $('#notEnoughCredits').removeAttr('hidden');
+
+                            }
                         },
                         error: function () {
                             $('#notfound').removeAttr('hidden');
@@ -248,10 +278,10 @@
                         method: "POST",
                         data: vmTransaction,
                         success: function (data) {
-                            alert("sucess")
+                            window.location.href = '/Transaction/Success';
                         },
                         error: function () {
-                            alert('error')
+                            alert('error encountered')
                         }
                     })
                     console.log(vmTransaction);

@@ -16,13 +16,20 @@ namespace Q_Less.Controllers.API
             _context = new QLinkContext();
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
         [HttpGet]
         public IHttpActionResult GetTransportCard(int Id)
         {
             var transportCard = _context.TransportCards
                 .Include(c => c.CardType)
-                .SingleOrDefault(c => c.TransportCardUniqueId == Id);
-            if (transportCard == null)
+                .Where(c => c.TransportCardUniqueId == Id)
+                .ToList()
+                .Where(t => DateTime.Now.Year - t.LastUsed.Year  <= 5);
+            if (transportCard.Count() == 0)
                 return NotFound();
             return Ok(transportCard);
         }

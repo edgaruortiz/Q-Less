@@ -37,21 +37,18 @@
 {
     <div class="form-group">
         @Html.LabelFor(m => m.CashValue)
-        @Html.TextBoxFor(m => m.CashValue, new { @class = "form-control" })
+        @Html.TextBoxFor(m => m.CashValue, new { @class = "form-control", @Id = "CashValue" })
         @Html.ValidationMessageFor(m => m.CashValue)
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.CardValue)
-        @Html.TextBoxFor(m => m.CardValue, new { @class = "form-control" })
+        @Html.TextBoxFor(m => m.CardValue, new { @class = "form-control", @Id = "CardValue" })
         @Html.ValidationMessageFor(m => m.CardValue)
     </div>
     @Html.HiddenFor(m => m.TransportCardUniqueId, new { @Id = "TransportCardUniqueId" });
-    <button type="submit" class="btn btn-info">Save</button>
+    <legend hidden id="notValid" class="text-danger small">Amount to add Must be Less than or Equal the Cash Value!</legend>
+    <button type="submit" id="submitAmount" class="btn btn-primary" disabled>Save</button>
 }
-
-@*ADD Condition thru javascript nalng , if cash < cardval = enable button*@
-
-
 
 
 @section scripts
@@ -62,13 +59,12 @@
         $.validator.addMethod("isValidCard", function () {
             return TransportCardUniqueId && TransportCardUniqueId !== 0
         }, "Please fillup valid Card Id");
-            
+
         $.validator.addMethod("isValidAmount", function () {
             return vm.CardValue && vm.CardValue > 0
         }, "Please Enter valid load Amount");
 
         $(document).ready(function () {
-            console.log($('#TransportCardUniqueId').val())
             $('#qcard').change(function () {
                 resetValues();
                 TransportCardUniqueId = $('#qcard').val()
@@ -81,14 +77,22 @@
                 console.log(vm)
             });
 
+            $('#CashValue').change(function () {
+                isValid();
+            });
+            $('#CardValue').change(function () {
+                isValid();
+            });
+
+
             $('#SubmitSearchForm').validate({
                 submitHandler: function () {
                     $.ajax({
                         url: "/api/TransportCards/GetTransportCard/" + TransportCardUniqueId,
                         method: "GET",
                         success: function (data) {
-                            $('#qcardCredit').text(data.CardValue.toFixed(2))
-                            $('#qcardType').text(data.CardType.Description)
+                            $('#qcardCredit').text(data[0].CardValue.toFixed(2))
+                            $('#qcardType').text(data[0].CardType.Description)
                             $('#btnSubmit').removeAttr('disabled');
                         },
                         error: function () {
@@ -106,6 +110,24 @@
                 $('#qcardCredit').text('0.00')
                 $('#qcardType').text('-')
                 TransportCardUniqueId = "";
+            }
+
+            function isValid() {
+                var cash = parseInt($('#CashValue').val());
+                var toCredit = parseInt($('#CardValue').val());
+                if (toCredit) {
+                    if (toCredit > cash || toCredit <= 0) {
+                        $('#notValid').removeAttr("hidden");
+                        $('#submitAmount').attr("disabled", "");
+                    } else {
+                        $('#submitAmount').removeAttr("disabled");
+                        $('#notValid').attr("hidden", "");
+                    }
+                } else {
+                    $('#notValid').removeAttr("hidden");
+                    $('#submitAmount').attr("disabled", "");
+                }
+               
             }
         })
 

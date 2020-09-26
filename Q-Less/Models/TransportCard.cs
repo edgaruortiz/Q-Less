@@ -23,5 +23,10 @@ namespace Q_Less.Models
         [Display(Name = "Initial Amount")]
         public double CardValue { get; set; }
 
+        [Display(Name = "ID Number")]
+        public string Identification { get; set; }
+
+        public DateTime LastUsed { get; set; }
+
     }
 }

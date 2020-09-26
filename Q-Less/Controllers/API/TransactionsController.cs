@@ -16,6 +16,11 @@ namespace Q_Less.Controllers.API
             _context = new QLinkContext();
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
         [HttpPost]
         public IHttpActionResult Save(NewTransaction newTransaction)
         {
@@ -23,6 +28,12 @@ namespace Q_Less.Controllers.API
             {
                 var transportCard = _context.TransportCards
                     .SingleOrDefault(c => c.TransportCardUniqueId == newTransaction.TransportCardId);
+                var currentAmount = transportCard.CardValue;
+
+                if ((currentAmount - newTransaction.Amount) < 0)
+                {
+                    return BadRequest();
+                }
                 var transaction = new Transaction
                 {
                     Amount = newTransaction.Amount,
@@ -32,8 +43,8 @@ namespace Q_Less.Controllers.API
                     DateStamp = DateTime.Now
                 };
                 _context.Transactions.Add(transaction);
-                var currentAmount = transportCard.CardValue;
                 transportCard.CardValue = currentAmount - newTransaction.Amount;
+                transportCard.LastUsed = DateTime.Now;
                 _context.SaveChanges();
             }
             return Ok();

@@ -14,6 +14,11 @@ namespace Q_Less.Controllers
         {
             _context = new QLinkContext();
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
         public ActionResult Index()
         {
             return View();
@@ -29,6 +34,34 @@ namespace Q_Less.Controllers
         {
             return View();
         }
+        [Route("ApplyForDiscounted")]
+        public ActionResult ApplyForDiscounted()
+        {
+            return View();
+        }
+        
+        [Route("ApplyDiscounted")]
+        public ActionResult ApplyDiscounted(TransportCard card)
+        {
+            var transportCard = _context.TransportCards
+            .SingleOrDefault(c => c.TransportCardUniqueId == card.TransportCardUniqueId);
+            if(transportCard != null)
+            {
+                if(transportCard.CardTypeId != 2)
+                {
+                    transportCard.CardTypeId = 2;
+                    transportCard.Identification = card.Identification;
+                    transportCard.LastUsed = DateTime.Now;
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    return View("TransactionError");
+                }
+            }
+            return View("TransactionSuccess");
+        }
+
 
         [Route("Reload")]
         public ActionResult Reload(TransportCardReloadHistory card)
@@ -41,11 +74,12 @@ namespace Q_Less.Controllers
 
             double currentVal = transportCard.CardValue;
             transportCard.CardValue = currentVal + card.CardValue;
+            transportCard.LastUsed = DateTime.Now;
             card.DateStamp = DateTime.Now;
 
             _context.TransportCardReloadHistories.Add(card);
             _context.SaveChanges();
-            return View();
+            return View("TransactionSuccess");
         }   
 
         [Route("Save")]
@@ -60,7 +94,13 @@ namespace Q_Less.Controllers
                 }
                 catch (Exception ex) { }
             }
-            return RedirectToAction("Index", "Home");
+            return View("TransactionSuccess");
         }
+        [Route("Success")]
+        public ActionResult Success()
+        {
+            return View("TransactionSuccess");
+        }
+
     }
 }

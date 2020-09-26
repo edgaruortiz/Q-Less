@@ -6920,3 +6920,7 @@ a.list-group-item-danger.active:focus {
 .twitter-typeahead{
     width:280px !important;
 }
+
+.align-self-center {
+    align-self: center !important
+}

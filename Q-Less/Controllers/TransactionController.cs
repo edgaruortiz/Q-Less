@@ -13,5 +13,10 @@ namespace Q_Less.Controllers
         {
             return View();
         }
+        [Route("Success")]
+        public ActionResult Success()
+        {
+            return View("TransactionSuccess");
+        }
     }
 }

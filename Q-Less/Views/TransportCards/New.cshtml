@@ -19,15 +19,32 @@
 
     <div class="form-group">
         @Html.LabelFor(m => m.CardValue)
-        @Html.TextBoxFor(m => m.CardValue, new { @class = "form-control" })
+        @Html.TextBoxFor(m => m.CardValue, new { @class = "form-control", @Value = "100", @Id = "amtVal" })
         @Html.ValidationMessageFor(m => m.CardValue)
     </div>
     @Html.HiddenFor(m => m.DatePurchased, new { @Value = DateTime.Now });
+    @Html.HiddenFor(m => m.LastUsed, new { @Value = DateTime.Now });
     @Html.HiddenFor(m => m.CardTypeId, new { @Value = 1 });
-    <button type="submit" class="btn btn-info">Save</button>
+    <legend hidden id="notValid" class="text-danger small">Initial Amount must be Greater than Zero and not Exceed the amount of 10,000</legend>
+    <button type="submit" class="btn btn-info" id="btnSave">Save</button>
 }
 
 @section scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            $('#amtVal').on('change', function () {
+                var amt = parseFloat($('#amtVal').val()) || 0;
+                if (amt <= 0 || amt > 10000) {
+                    $('#btnSave').attr('disabled', "");
+                    $('#notValid').removeAttr("hidden");
+
+                } else {
+                    $('#btnSave').removeAttr('disabled');
+                    $('#notValid').attr("hidden", "");
+                }
+            })
+        });
+    </script>
 }

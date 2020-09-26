@@ -16,6 +16,11 @@ namespace Q_Less.Controllers.API
             _context = new QLinkContext();
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
         [HttpGet]
         public IHttpActionResult GetStations(int id)
         {
@@ -26,17 +31,15 @@ namespace Q_Less.Controllers.API
             return Ok(stations);
         }
 
-
-
         [HttpPost]
         public IHttpActionResult GetTripCost(NewTrip newTrip)
         {
-            var transportCard = _context.PriceMatrices
+            var PriceMatrix = _context.PriceMatrices
                 .Where(p => p.EntryStationid == newTrip.EntryPointId && p.ExitStationid == newTrip.ExitPointId)
                 .ToList();
-            if (transportCard == null)
+            if (PriceMatrix == null)
                 return NotFound();
-            return Ok(transportCard);
+            return Ok(PriceMatrix);
         }
     }
 }

@@ -195,11 +195,18 @@
     <Compile Include="Migrations\202009251538488_AddedDateStamp.designer.cs">
       <DependentUpon>202009251538488_AddedDateStamp.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009260258514_addedIdentifcationField.cs" />
+    <Compile Include="Migrations\202009260258514_addedIdentifcationField.designer.cs">
+      <DependentUpon>202009260258514_addedIdentifcationField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009260523391_addedLastUsedDate.cs" />
+    <Compile Include="Migrations\202009260523391_addedLastUsedDate.designer.cs">
+      <DependentUpon>202009260523391_addedLastUsedDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CardReloadRules.cs" />
     <Compile Include="Models\CardType.cs" />
     <Compile Include="Models\DestinationMatrix.cs" />
-    <Compile Include="Models\LineOneMatrix.cs" />
     <Compile Include="Models\NewTransaction.cs" />
     <Compile Include="Models\NewTrip.cs" />
     <Compile Include="Models\PriceMatrix.cs" />
@@ -212,126 +219,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-flatly.css" />
-    <Content Include="Content\bootstrap-lumen.css" />
-    <Content Include="Content\bootstrap-paper.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap-united.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\autoFill.bootstrap.css" />
-    <Content Include="Content\DataTables\css\autoFill.bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\autoFill.dataTables.css" />
-    <Content Include="Content\DataTables\css\autoFill.dataTables.min.css" />
-    <Content Include="Content\DataTables\css\autoFill.foundation.css" />
-    <Content Include="Content\DataTables\css\autoFill.foundation.min.css" />
-    <Content Include="Content\DataTables\css\autoFill.jqueryui.css" />
-    <Content Include="Content\DataTables\css\autoFill.jqueryui.min.css" />
-    <Content Include="Content\DataTables\css\buttons.bootstrap.css" />
-    <Content Include="Content\DataTables\css\buttons.bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\buttons.bootstrap4.css" />
-    <Content Include="Content\DataTables\css\buttons.bootstrap4.min.css" />
-    <Content Include="Content\DataTables\css\buttons.dataTables.css" />
-    <Content Include="Content\DataTables\css\buttons.dataTables.min.css" />
-    <Content Include="Content\DataTables\css\buttons.foundation.css" />
-    <Content Include="Content\DataTables\css\buttons.foundation.min.css" />
-    <Content Include="Content\DataTables\css\buttons.jqueryui.css" />
-    <Content Include="Content\DataTables\css\buttons.jqueryui.min.css" />
-    <Content Include="Content\DataTables\css\colReorder.bootstrap.css" />
-    <Content Include="Content\DataTables\css\colReorder.bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\colReorder.dataTables.css" />
-    <Content Include="Content\DataTables\css\colReorder.dataTables.min.css" />
-    <Content Include="Content\DataTables\css\colReorder.foundation.css" />
-    <Content Include="Content\DataTables\css\colReorder.foundation.min.css" />
-    <Content Include="Content\DataTables\css\colReorder.jqueryui.css" />
-    <Content Include="Content\DataTables\css\colReorder.jqueryui.min.css" />
-    <Content Include="Content\DataTables\css\dataTables.bootstrap.css" />
-    <Content Include="Content\DataTables\css\dataTables.bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\dataTables.bootstrap4.css" />
-    <Content Include="Content\DataTables\css\dataTables.bootstrap4.min.css" />
-    <Content Include="Content\DataTables\css\dataTables.foundation.css" />
-    <Content Include="Content\DataTables\css\dataTables.foundation.min.css" />
-    <Content Include="Content\DataTables\css\dataTables.jqueryui.css" />
-    <Content Include="Content\DataTables\css\dataTables.jqueryui.min.css" />
-    <Content Include="Content\DataTables\css\dataTables.material.css" />
-    <Content Include="Content\DataTables\css\dataTables.material.min.css" />
-    <Content Include="Content\DataTables\css\dataTables.semanticui.css" />
-    <Content Include="Content\DataTables\css\dataTables.semanticui.min.css" />
-    <Content Include="Content\DataTables\css\dataTables.uikit.css" />
-    <Content Include="Content\DataTables\css\dataTables.uikit.min.css" />
-    <Content Include="Content\DataTables\css\fixedColumns.bootstrap.css" />
-    <Content Include="Content\DataTables\css\fixedColumns.bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\fixedColumns.dataTables.css" />
-    <Content Include="Content\DataTables\css\fixedColumns.dataTables.min.css" />
-    <Content Include="Content\DataTables\css\fixedColumns.foundation.css" />
-    <Content Include="Content\DataTables\css\fixedColumns.foundation.min.css" />
-    <Content Include="Content\DataTables\css\fixedColumns.jqueryui.css" />
-    <Content Include="Content\DataTables\css\fixedColumns.jqueryui.min.css" />
-    <Content Include="Content\DataTables\css\fixedHeader.bootstrap.css" />
-    <Content Include="Content\DataTables\css\fixedHeader.bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\fixedHeader.dataTables.css" />
-    <Content Include="Content\DataTables\css\fixedHeader.dataTables.min.css" />
-    <Content Include="Content\DataTables\css\fixedHeader.foundation.css" />
-    <Content Include="Content\DataTables\css\fixedHeader.foundation.min.css" />
-    <Content Include="Content\DataTables\css\fixedHeader.jqueryui.css" />
-    <Content Include="Content\DataTables\css\fixedHeader.jqueryui.min.css" />
-    <Content Include="Content\DataTables\css\jquery.dataTables.css" />
-    <Content Include="Content\DataTables\css\jquery.dataTables.min.css" />
-    <Content Include="Content\DataTables\css\jquery.dataTables_themeroller.css" />
-    <Content Include="Content\DataTables\css\keyTable.bootstrap.css" />
-    <Content Include="Content\DataTables\css\keyTable.bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\keyTable.dataTables.css" />
-    <Content Include="Content\DataTables\css\keyTable.dataTables.min.css" />
-    <Content Include="Content\DataTables\css\keyTable.foundation.css" />
-    <Content Include="Content\DataTables\css\keyTable.foundation.min.css" />
-    <Content Include="Content\DataTables\css\keyTable.jqueryui.css" />
-    <Content Include="Content\DataTables\css\keyTable.jqueryui.min.css" />
-    <Content Include="Content\DataTables\css\responsive.bootstrap.css" />
-    <Content Include="Content\DataTables\css\responsive.bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\responsive.dataTables.css" />
-    <Content Include="Content\DataTables\css\responsive.dataTables.min.css" />
-    <Content Include="Content\DataTables\css\responsive.foundation.css" />
-    <Content Include="Content\DataTables\css\responsive.foundation.min.css" />
-    <Content Include="Content\DataTables\css\responsive.jqueryui.css" />
-    <Content Include="Content\DataTables\css\responsive.jqueryui.min.css" />
-    <Content Include="Content\DataTables\css\rowReorder.bootstrap.css" />
-    <Content Include="Content\DataTables\css\rowReorder.bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\rowReorder.dataTables.css" />
-    <Content Include="Content\DataTables\css\rowReorder.dataTables.min.css" />
-    <Content Include="Content\DataTables\css\rowReorder.foundation.css" />
-    <Content Include="Content\DataTables\css\rowReorder.foundation.min.css" />
-    <Content Include="Content\DataTables\css\rowReorder.jqueryui.css" />
-    <Content Include="Content\DataTables\css\rowReorder.jqueryui.min.css" />
-    <Content Include="Content\DataTables\css\scroller.bootstrap.css" />
-    <Content Include="Content\DataTables\css\scroller.bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\scroller.dataTables.css" />
-    <Content Include="Content\DataTables\css\scroller.dataTables.min.css" />
-    <Content Include="Content\DataTables\css\scroller.foundation.css" />
-    <Content Include="Content\DataTables\css\scroller.foundation.min.css" />
-    <Content Include="Content\DataTables\css\scroller.jqueryui.css" />
-    <Content Include="Content\DataTables\css\scroller.jqueryui.min.css" />
-    <Content Include="Content\DataTables\css\select.bootstrap.css" />
-    <Content Include="Content\DataTables\css\select.bootstrap.min.css" />
-    <Content Include="Content\DataTables\css\select.dataTables.css" />
-    <Content Include="Content\DataTables\css\select.dataTables.min.css" />
-    <Content Include="Content\DataTables\css\select.foundation.css" />
-    <Content Include="Content\DataTables\css\select.foundation.min.css" />
-    <Content Include="Content\DataTables\css\select.jqueryui.css" />
-    <Content Include="Content\DataTables\css\select.jqueryui.min.css" />
-    <Content Include="Content\DataTables\images\details_close.png" />
-    <Content Include="Content\DataTables\images\details_open.png" />
-    <Content Include="Content\DataTables\images\sort_asc.png" />
-    <Content Include="Content\DataTables\images\sort_asc_disabled.png" />
-    <Content Include="Content\DataTables\images\sort_both.png" />
-    <Content Include="Content\DataTables\images\sort_desc.png" />
-    <Content Include="Content\DataTables\images\sort_desc_disabled.png" />
-    <Content Include="Content\DataTables\swf\flashExport.swf" />
     <Content Include="Content\font-awesome-4.7.0\css\font-awesome.css" />
     <Content Include="Content\font-awesome-4.7.0\css\font-awesome.min.css" />
     <Content Include="Content\font-awesome-4.7.0\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\font-awesome-4.7.0\HELP-US-OUT.txt" />
-    <Content Include="Content\toastr.css" />
-    <Content Include="Content\toastr.min.css" />
     <Content Include="Content\typeahead.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -339,10 +235,6 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Content\DataTables\css\common.scss" />
-    <Content Include="Content\DataTables\css\mixins.scss" />
-    <Content Include="Content\toastr.less" />
-    <Content Include="Content\toastr.scss" />
     <Content Include="Content\font-awesome-4.7.0\fonts\fontawesome-webfont.eot" />
     <Content Include="Content\font-awesome-4.7.0\fonts\fontawesome-webfont.ttf" />
     <Content Include="Content\font-awesome-4.7.0\fonts\fontawesome-webfont.woff" />
@@ -400,6 +292,10 @@
     <Content Include="Views\TransportCards\New.cshtml" />
     <Content Include="Views\Transaction\New.cshtml" />
     <Content Include="Views\TransportCards\Load.cshtml" />
+    <Content Include="Views\Transaction\Success.cshtml" />
+    <Content Include="Views\Shared\TransactionSuccess.cshtml" />
+    <Content Include="Views\TransportCards\ApplyForDiscounted.cshtml" />
+    <Content Include="Views\Shared\TransactionError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -448,6 +344,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009251538488_AddedDateStamp.resx">
       <DependentUpon>202009251538488_AddedDateStamp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009260258514_addedIdentifcationField.resx">
+      <DependentUpon>202009260258514_addedIdentifcationField.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009260523391_addedLastUsedDate.resx">
+      <DependentUpon>202009260523391_addedLastUsedDate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
